@@ -21,10 +21,8 @@ const ChatPage = () => {
 	const { messages, selectedUser, fetchUsers, fetchMessages } = useChatStore();
 
 	useEffect(() => {
-	if (user?.id) {
-		fetchUsers(user.id);
-	}
-	}, [fetchUsers, user]);
+	if (user) fetchUsers();
+	}, [fetchUsers , user]);
 
 	useEffect(() => {
 		if (selectedUser) fetchMessages(selectedUser.clerkId);

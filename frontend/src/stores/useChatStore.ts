@@ -14,7 +14,7 @@ interface ChatStore {
 	messages: Message[];
 	selectedUser: User | null;
 
-	fetchUsers: (currentUserId: string) => Promise<void>;
+	fetchUsers: () => Promise<void>;
 	initSocket: (userId: string) => void;
 	disconnectSocket: () => void;
 	sendMessage: (receiverId: string, senderId: string, content: string) => void;
@@ -42,22 +42,17 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
 	setSelectedUser: (user) => set({ selectedUser: user }),
 
-		fetchUsers: async (currentUserId: string) => {
-			set({ isLoading: true, error: null });
-			try {
-				const response = await axiosInstance.get("/users");
-
-				const filteredUsers = response.data.filter(
-					(u: User) => u.clerkId !== currentUserId
-				);
-
-				set({ users: filteredUsers });
-			} catch (error: any) {
-				set({ error: error.response.data.message });
-			} finally {
-				set({ isLoading: false });
-			}
-		},
+	fetchUsers: async () => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axiosInstance.get("/users");
+			set({ users: response.data });
+		} catch (error: any) {
+			set({ error: error.response.data.message });
+		} finally {
+			set({ isLoading: false });
+		}
+	},
 
 	initSocket: (userId) => {
 		if (!get().isConnected) {
